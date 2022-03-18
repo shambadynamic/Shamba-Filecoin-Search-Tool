@@ -1,0 +1,38 @@
+{
+  "request": {
+    "agg_x": "agg_mean",
+    "dataset_code": "COPERNICUS/S2_SR",
+    "selected_band": "NDVI",
+    "geometry": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [19.51171875, 4.214943141390651],
+                [18.28125, -4.740675384778361],
+                [26.894531249999996, -4.565473550710278],
+                [27.24609375, 1.2303741774326145],
+                [19.51171875, 4.214943141390651]
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "start_date": "2021-09-01",
+    "end_date": "2021-09-10",
+    "image_scale": 250
+  },
+  "response": {
+    "datetime": "2022-03-14T12:01:48.596Z",
+    "agg_mean": 624091649911697000,
+    "result": 624091649911697000,
+    "contract_address": "",
+    "tx_hash": ""
+  }
+}

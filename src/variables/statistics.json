@@ -1,0 +1,26 @@
+[
+  {
+    "value": "agg_mean",
+    "name": "Aggregated Mean"
+  },
+  {
+    "value": "agg_max",
+    "name": "Aggregated Max"
+  },
+  {
+    "value": "agg_min",
+    "name": "Aggregated Min"
+  },
+  {
+    "value": "agg_median",
+    "name": "Aggregated Median"
+  },
+  {
+    "value": "agg_stdDev",
+    "name": "Aggregated Std. Dev."
+  },
+  {
+    "value": "agg_variance",
+    "name": "Aggregated Variance"
+  }
+]
