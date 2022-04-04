@@ -16,10 +16,17 @@
         list below.
       </p>
       <div v-if="store.state.searchFor">
-        <Accordion :histories="store.state.searchHistories" />
+        <Accordion :histories="store.state.getSearchHistories" />
       </div>
-      <div v-else-if="Object.keys(store.state.histories).length > 0">
-        <Accordion :histories="store.state.histories" />
+      <div
+        v-else-if="
+          Object.keys({
+            ...store.state.histories,
+            ...store.state.fireHistories,
+          }).length > 0
+        "
+      >
+        <Accordion :histories="store.state.getActiveHistories" />
       </div>
       <div v-else>
         <p><i class="fas fa-spinner fa-spin me-2"></i> loading ...</p>

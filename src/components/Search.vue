@@ -59,9 +59,12 @@
         </div>
         <p class="mt-4">Response parameters</p>
         <InputGroup name="date_time" type="date">Transaction Date</InputGroup>
-        <InputGroup name="contract_address" type="text"
-          >Contract address</InputGroup
-        >
+        <InputGroup name="contract_address" type="text">
+          Contract address
+        </InputGroup>
+        <InputGroup name="operator_address" type="text">
+          Operator address
+        </InputGroup>
         <InputGroup name="tx_hash" type="text">TX Hash</InputGroup>
       </div>
       <div class="d-flex justify-content-between mt-2 p-2">
@@ -86,7 +89,7 @@ import { ref, defineEmits } from "vue";
 import datasets from "@/datasets.json";
 import { Dataset } from "@/types/dataset";
 import store from "@/store";
-import { History } from "@/types/history";
+import { History, FireHistory } from "@/types/history";
 import InputGroup from "@/components/InputGroup.vue";
 import Select from "@/components/Select.vue";
 import statistics from "@/variables/statistics.json";
@@ -117,6 +120,7 @@ const doSearch = function (event: any) {
   let geometry = formdata.get("geometry");
   let tx_hash = formdata.get("tx_hash");
   let contract_address = formdata.get("contract_address");
+  let operator_address = formdata.get("operator_address");
   let date_time = formdata.get("date_time");
 
   if (searchButton.value) {
@@ -127,9 +131,12 @@ const doSearch = function (event: any) {
   let find = false;
 
   store.state.searchHistories = {};
-  for (const key in store.state.histories) {
-    if (Object.prototype.hasOwnProperty.call(store.state.histories, key)) {
-      const history: History = store.state.histories[key];
+  for (const key in store.state.getActiveHistories) {
+    if (
+      Object.prototype.hasOwnProperty.call(store.state.getActiveHistories, key)
+    ) {
+      const history: History | FireHistory =
+        store.state.getActiveHistories[key];
       if (
         typeof dataset === "string" &&
         dataset.trim() &&
@@ -201,6 +208,14 @@ const doSearch = function (event: any) {
         typeof contract_address === "string" &&
         contract_address.trim() &&
         history.response.contract_address.search(contract_address) === -1
+      ) {
+        continue;
+      }
+
+      if (
+        typeof operator_address === "string" &&
+        operator_address.trim() &&
+        history.response.operator_address.search(operator_address) === -1
       ) {
         continue;
       }

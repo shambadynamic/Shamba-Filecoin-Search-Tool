@@ -1,9 +1,9 @@
 pre {
   background-color: darkslategray;
-  border-radius: 5px;
   padding: 10px 20px;
   color: white;
   overflow: auto;
+  margin: 0;
 }
 .json-key {
   color: rgb(255, 123, 123);

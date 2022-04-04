@@ -15,10 +15,21 @@
           :aria-controls="'panelsStayOpen-collapseOne_' + i"
         >
           <div
-            style="text-overflow: ellipsis; overflow: hidden; width: 100%"
+            style="
+              text-overflow: ellipsis;
+              overflow: hidden;
+              width: 100%;
+              display: flex;
+            "
             class="me-2"
+            :class="history.type === 'FIRE' ? 'text-danger' : 'text-success'"
           >
             {{ history.response.tx_hash }}
+            <small
+              :class="history.type === 'FIRE' ? 'bg-danger' : 'bg-success'"
+              class="ms-auto text-white ps-2 pt-1 pb-1 pe-2 rounded-pill d-inline-block d-none d-lg-block"
+              >{{ history.type }}</small
+            >
           </div>
         </button>
       </h2>
@@ -27,7 +38,7 @@
         class="accordion-collapse collapse"
         :aria-labelledby="'panelsStayOpen-headingOne_' + i"
       >
-        <div class="accordion-body">
+        <div>
           <pre v-html="prettyPrint(history)"></pre>
         </div>
       </div>
@@ -40,10 +51,10 @@
 
 <script lang="ts" setup>
 import { defineProps } from "vue";
-import { HistoriesKeyPairValue } from "@/types/history";
+import { History, FireHistory, KeyPair } from "@/types/history";
 
 const props = defineProps<{
-  histories: HistoriesKeyPairValue;
+  histories: KeyPair<History> | KeyPair<FireHistory>;
 }>();
 
 function replacer(
