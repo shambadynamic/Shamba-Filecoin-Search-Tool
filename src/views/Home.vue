@@ -18,18 +18,17 @@
       <div v-if="store.state.searchFor">
         <Accordion :histories="store.state.getSearchHistories" />
       </div>
-      <div
-        v-else-if="
-          Object.keys({
-            ...store.state.histories,
-            ...store.state.fireHistories,
-          }).length > 0
-        "
-      >
-        <Accordion :histories="store.state.getActiveHistories" />
+      <div v-else-if="Object.keys(store.state.histories).length > 0">
+        <Accordion :histories="store.state.histories" />
+        <p class="mt-3" v-if="store.state.loading">
+          <i class="fas fa-spinner fa-spin me-2"></i> loading ...
+        </p>
       </div>
       <div v-else>
-        <p><i class="fas fa-spinner fa-spin me-2"></i> loading ...</p>
+        <p v-if="store.state.loading">
+          <i class="fas fa-spinner fa-spin me-2"></i> loading ...
+        </p>
+        <div v-else class="alert alert-info">No record found!</div>
       </div>
     </div>
     <div
@@ -42,9 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import json from "@/test.json";
 import store from "@/store/index";
-import { History } from "@/types/history";
 import Accordion from "@/components/Accordion.vue";
 
 function clearSeach() {

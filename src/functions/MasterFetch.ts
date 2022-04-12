@@ -36,13 +36,13 @@ export default class MasterFetch {
     protected credentials: RequestCredentials = "include"
   ) {}
 
-  cacheRequest<Type>(
+  async cacheRequest<Type>(
     url: string,
     method: HttpMethod = "GET",
     data: any = `{}`,
     headers: Headers = {},
     dataFun: CallBackFun<Type>
-  ): void {
+  ): Promise<ReturnObject<Type>> {
     url = url.trim();
     const localStorageItemName =
       method + ":" + url + ":" + this.stringify(data);
@@ -55,13 +55,13 @@ export default class MasterFetch {
       dataFun(get);
     }
 
-    this.req<Type>(url, method, data, headers, "default").then((ret) => {
-      if (ret.headers && !ret.e) {
-        window.localStorage.setItem(localStorageItemName, this.stringify(ret));
-      }
-      console.log("Data returning from fetch");
-      dataFun(ret);
-    });
+    const ret = await this.req<Type>(url, method, data, headers, "default");
+    if (ret.headers && !ret.e) {
+      window.localStorage.setItem(localStorageItemName, this.stringify(ret));
+    }
+    console.log("Data returning from fetch");
+    dataFun(ret);
+    return ret;
   }
 
   async req<Type>(

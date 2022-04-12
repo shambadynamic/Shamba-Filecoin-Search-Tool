@@ -29,11 +29,11 @@
                 ALL
               </button>
               <button
-                :class="{ active: store.state.activeHistory == 'GEO-SPATIAL' }"
-                @click="store.state.activeHistory = 'GEO-SPATIAL'"
+                :class="{ active: store.state.activeHistory == 'GEOSTATS' }"
+                @click="store.state.activeHistory = 'GEOSTATS'"
                 class="btn btn-outline-light my-light"
               >
-                GEO-SPATIAL
+                GEOSTATS
               </button>
               <button
                 :class="{ active: store.state.activeHistory == 'FIRE' }"

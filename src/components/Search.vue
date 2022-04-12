@@ -67,7 +67,7 @@
         </InputGroup>
         <InputGroup name="tx_hash" type="text">TX Hash</InputGroup>
       </div>
-      <div class="d-flex justify-content-between mt-2 p-2">
+      <div class="d-flex justify-content-between align-items-center mt-2 p-2">
         <button
           ref="searchButton"
           type="reset"
@@ -76,6 +76,18 @@
         >
           <i class="fas fa-times fe-fw me-2"></i> Reset
         </button>
+        <div class="form-check ms-2 me-1">
+          <input
+            class="form-check-input"
+            name="dontClearFields"
+            type="checkbox"
+            value="yes"
+            id="dontClearFields"
+          />
+          <label class="form-check-label" for="dontClearFields">
+            Don't clear search fields
+          </label>
+        </div>
         <button ref="searchButton" type="submit" class="btn btn-logo">
           <i class="fas fa-search fe-fw me-2"></i> Search
         </button>
@@ -89,7 +101,7 @@ import { ref, defineEmits } from "vue";
 import datasets from "@/datasets.json";
 import { Dataset } from "@/types/dataset";
 import store from "@/store";
-import { History, FireHistory } from "@/types/history";
+import { History } from "@/types/history";
 import InputGroup from "@/components/InputGroup.vue";
 import Select from "@/components/Select.vue";
 import statistics from "@/variables/statistics.json";
@@ -110,7 +122,9 @@ const doSearch = function (event: any) {
   if (event.target === null) {
     return;
   }
-  let formdata = new FormData(event.target as HTMLFormElement);
+  let form = event.target as HTMLFormElement;
+  let formdata = new FormData(form);
+  let dontClearFields = formdata.get("dontClearFields");
   let dataset = formdata.get("dataset");
   let bands = formdata.get("bands");
   let scale = parseFloat(formdata.get("scale") + "");
@@ -123,6 +137,11 @@ const doSearch = function (event: any) {
   let operator_address = formdata.get("operator_address");
   let date_time = formdata.get("date_time");
 
+  if (!dontClearFields) {
+    form.reset();
+    maindataset.value = null;
+  }
+
   if (searchButton.value) {
     searchButton.value.innerHTML =
       '<i class="fe-fw fa-solid fa-spinner fa-spin me-2"></i> Searching';
@@ -131,105 +150,106 @@ const doSearch = function (event: any) {
   let find = false;
 
   store.state.searchHistories = {};
-  for (const key in store.state.getActiveHistories) {
-    if (
-      Object.prototype.hasOwnProperty.call(store.state.getActiveHistories, key)
-    ) {
-      const history: History | FireHistory =
-        store.state.getActiveHistories[key];
-      if (
-        typeof dataset === "string" &&
-        dataset.trim() &&
-        history.request.dataset_code.search(dataset) === -1
-      ) {
-        continue;
-      }
-
-      if (
-        typeof bands === "string" &&
-        bands.trim() &&
-        history.request.selected_band.search(bands) === -1
-      ) {
-        continue;
-      }
-
-      if (scale && history.request.image_scale !== scale) {
-        continue;
-      }
-
-      if (
-        typeof statistics === "string" &&
-        statistics.trim() &&
-        history.request.agg_x !== statistics
-      ) {
-        continue;
-      }
-
-      if (
-        typeof start_date === "string" &&
-        start_date.trim() &&
-        new Date(history.request.start_date).getTime() !==
-          new Date(start_date).getTime()
-      ) {
-        continue;
-      }
-
-      if (
-        typeof end_date === "string" &&
-        end_date.trim() &&
-        new Date(history.request.end_date).getTime() !==
-          new Date(end_date).getTime()
-      ) {
-        continue;
-      }
-
+  for (const key in store.state.histories) {
+    if (Object.prototype.hasOwnProperty.call(store.state.histories, key)) {
+      const history: History = store.state.histories[key];
       try {
         if (
-          typeof geometry === "string" &&
-          geometry.trim() &&
-          JSON.stringify(history.request.geometry) !==
-            JSON.stringify(JSON.parse(geometry))
+          typeof dataset === "string" &&
+          dataset.trim() &&
+          history.request.dataset_code.search(dataset) === -1
         ) {
           continue;
         }
+
+        if (
+          typeof bands === "string" &&
+          bands.trim() &&
+          history.request.selected_band.search(bands) === -1
+        ) {
+          continue;
+        }
+
+        if (scale && history.request.image_scale !== scale) {
+          continue;
+        }
+
+        if (
+          typeof statistics === "string" &&
+          statistics.trim() &&
+          history.request.agg_x !== statistics
+        ) {
+          continue;
+        }
+
+        if (
+          typeof start_date === "string" &&
+          start_date.trim() &&
+          new Date(history.request.start_date).getTime() !==
+            new Date(start_date).getTime()
+        ) {
+          continue;
+        }
+
+        if (
+          typeof end_date === "string" &&
+          end_date.trim() &&
+          new Date(history.request.end_date).getTime() !==
+            new Date(end_date).getTime()
+        ) {
+          continue;
+        }
+
+        try {
+          if (
+            typeof geometry === "string" &&
+            geometry.trim() &&
+            JSON.stringify(history.request.geometry) !==
+              JSON.stringify(JSON.parse(geometry))
+          ) {
+            continue;
+          }
+        } catch (e) {
+          continue;
+        }
+
+        if (
+          typeof tx_hash === "string" &&
+          tx_hash.trim() &&
+          history.response.tx_hash.search(tx_hash) === -1
+        ) {
+          continue;
+        }
+
+        if (
+          typeof contract_address === "string" &&
+          contract_address.trim() &&
+          history.response.contract_address.search(contract_address) === -1
+        ) {
+          continue;
+        }
+
+        if (
+          typeof operator_address === "string" &&
+          operator_address.trim() &&
+          history.response.operator_address.search(operator_address) === -1
+        ) {
+          continue;
+        }
+
+        if (
+          typeof date_time === "string" &&
+          date_time.trim() &&
+          // Math.abs(
+          new Date(history.response.datetime).toLocaleDateString() !==
+            new Date(date_time).toLocaleDateString()
+          // ) >
+          //   24 * 60 * 60 * 1000
+        ) {
+          console.log(date_time);
+          continue;
+        }
       } catch (e) {
-        continue;
-      }
-
-      if (
-        typeof tx_hash === "string" &&
-        tx_hash.trim() &&
-        history.response.tx_hash.search(tx_hash) === -1
-      ) {
-        continue;
-      }
-
-      if (
-        typeof contract_address === "string" &&
-        contract_address.trim() &&
-        history.response.contract_address.search(contract_address) === -1
-      ) {
-        continue;
-      }
-
-      if (
-        typeof operator_address === "string" &&
-        operator_address.trim() &&
-        history.response.operator_address.search(operator_address) === -1
-      ) {
-        continue;
-      }
-
-      if (
-        typeof date_time === "string" &&
-        date_time.trim() &&
-        // Math.abs(
-        new Date(history.response.datetime).toLocaleDateString() !==
-          new Date(date_time).toLocaleDateString()
-        // ) >
-        //   24 * 60 * 60 * 1000
-      ) {
-        console.log(date_time);
         continue;
       }
 
